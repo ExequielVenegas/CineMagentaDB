@@ -6,28 +6,23 @@ import org.duoc.grupo11.model.Pelicula;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 
+import static org.duoc.grupo11.constants.DialogosConstantes.MIN;
+import static org.duoc.grupo11.constants.EtiquetasConstantes.*;
+
 public class ListarPeliculasForm extends JFrame {
-    public static final String LISTADO_DE_PELICULAS = "Listado de Películas";
+    public static final String TITULO_VENTANA_LISTAR_PELICULAS = "Listado de Películas";
     public static final int WIDTH1 = 800;
     public static final int HEIGHT1 = 400;
-    public static final String ACTUALIZAR = "🔄 Actualizar";
-    public static final String CERRAR = "❌ Cerrar";
-    public static final String ID = "ID";
-    public static final String TITULO = "Título";
-    public static final String DIRECTOR = "Director";
-    public static final String ANIO = "Año";
-    public static final String DURACION = "Duración";
-    public static final String GENERO = "Género";
-    public static final String MIN = " min";
 
     private JTable table;
     private DefaultTableModel tableModel;
     private PeliculaDAO peliculaDAO;
 
     public ListarPeliculasForm() {
-        setTitle(LISTADO_DE_PELICULAS);
+        setTitle(TITULO_VENTANA_LISTAR_PELICULAS);
         setSize(WIDTH1, HEIGHT1);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -37,7 +32,7 @@ public class ListarPeliculasForm extends JFrame {
     }
 
     private void initComponents() {
-        String[] columnNames = {ID, TITULO, DIRECTOR, ANIO, DURACION, GENERO};
+        String[] columnNames = {ID_COLUMNA, TITULO_COLUMNA, DIRECTOR_COLUMNA, ANIO_COLUMNA, DURACION_COLUMNA, GENERO_COLUMNA};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -65,7 +60,9 @@ public class ListarPeliculasForm extends JFrame {
 
     private void cargarDatos() {
         tableModel.setRowCount(0);
-        List<Pelicula> peliculas = peliculaDAO.obtenerTodasPeliculas();
+        List<Pelicula> peliculas = peliculaDAO.listarTodasPeliculas().stream()
+                .sorted(Comparator.comparingInt(Pelicula::getId))
+                .toList();
 
         for (Pelicula pelicula : peliculas) {
             Object[] row = {

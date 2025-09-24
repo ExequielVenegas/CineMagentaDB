@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static org.duoc.grupo11.constants.DatabaseConstants.*;
-import static org.duoc.grupo11.constants.DialogesConstants.DRIVER_NO_ENCONTRADO;
+import static org.duoc.grupo11.constants.DatabaseConstantes.*;
+import static org.duoc.grupo11.constants.DialogosConstantes.DRIVER_NO_ENCONTRADO;
 
 public class ConexionDB {
 

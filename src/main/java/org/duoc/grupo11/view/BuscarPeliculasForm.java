@@ -9,22 +9,17 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
+import static org.duoc.grupo11.constants.DialogosConstantes.MIN;
+import static org.duoc.grupo11.constants.EtiquetasConstantes.*;
+
 public class BuscarPeliculasForm extends JFrame {
-    public static final String BUSCAR_PELICULAS = "Buscar Películas";
+    public static final String TITULO_VENTAMA_BUSCAR_PELICULAS = "Buscar Películas";
     public static final int WIDTH1 = 800;
     public static final int HEIGHT1 = 400;
+
     public static final String BUSCAR_POR_TITULO = "Buscar por título:";
-    public static final String BUSCAR = "🔍 Buscar";
-    public static final String ID = "ID";
-    public static final String TITULO = "Título";
-    public static final String DIRECTOR = "Director";
-    public static final String ANIO = "Año";
-    public static final String DURACION = "Duración";
-    public static final String GENERO = "Género";
-    public static final String CERRAR = "❌ Cerrar";
     public static final String TERMINO_DE_BUSQUEDA = "Ingrese un término de búsqueda";
     public static final String NO_SE_ENCONTRARON_PELICULA = "No se encontraron películas con ese título";
-    public static final String MIN = " min";
 
     private JTextField txtBusqueda;
     private JTable table;
@@ -32,7 +27,7 @@ public class BuscarPeliculasForm extends JFrame {
     private PeliculaDAO peliculaDAO;
 
     public BuscarPeliculasForm() {
-        setTitle(BUSCAR_PELICULAS);
+        setTitle(TITULO_VENTAMA_BUSCAR_PELICULAS);
         setSize(WIDTH1, HEIGHT1);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -52,7 +47,7 @@ public class BuscarPeliculasForm extends JFrame {
         btnBuscar.addActionListener(e -> buscarPeliculas());
         panelBusqueda.add(btnBuscar);
 
-        String[] columnNames = {ID, TITULO, DIRECTOR, ANIO, DURACION, GENERO};
+        String[] columnNames = {ID_COLUMNA, TITULO_COLUMNA, DIRECTOR_COLUMNA, ANIO_COLUMNA, DURACION_COLUMNA, GENERO_COLUMNA};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {

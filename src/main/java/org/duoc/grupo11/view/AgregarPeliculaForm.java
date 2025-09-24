@@ -1,45 +1,22 @@
 package org.duoc.grupo11.view;
 
+import org.duoc.grupo11.constants.DialogosConstantes;
 import org.duoc.grupo11.dao.PeliculaDAO;
 import org.duoc.grupo11.model.Pelicula;
 
 import javax.swing.*;
 import java.awt.*;
 
+import static org.duoc.grupo11.constants.DialogosConstantes.*;
+import static org.duoc.grupo11.constants.EtiquetasConstantes.*;
+import static org.duoc.grupo11.model.Genero.*;
+
 public class AgregarPeliculaForm extends JFrame {
 
 
-    public static final String AGREGAR_NUEVA_PELÍCULA = "Agregar Nueva Película";
+    public static final String TITULO_VENTANA_AGREGAR_PELÍCULA = "Agregar Nueva Película";
     public static final int WIDTH1 = 400;
     public static final int HEIGHT1 = 350;
-    public static final String TITULO = "Título:";
-    public static final String DIRECTOR = "Director:";
-    public static final String ANIO = "Año:";
-    public static final String DURACION_MIN = "Duración (min):";
-    public static final String GENERO = "Género:";
-    public static final String COMEDIA = "Comedia";
-    public static final String DRAMA = "Drama";
-    public static final String ACCIÓN = "Acción";
-    public static final String TERROR = "Terror";
-    public static final String CIENCIA_FICCION = "Ciencia Ficción";
-    public static final String ROMANCE = "Romance";
-    public static final String AVENTURA = "Aventura";
-    public static final String ANIMACION = "Animación";
-    public static final String GUARDAR = "💾 Guardar";
-    public static final String LIMPIAR = "🧹 Limpiar";
-    public static final String CANCELAR = "❌ Cancelar";
-    public static final String PELICULA_AGREGADA_EXITOSAMENTE = "Película agregada exitosamente!";
-    public static final String ERROR_ANIO_Y_DURACION_INVALIDOS = "Error: Año y duración deben ser números válidos";
-    public static final String ERROR1 = "Error";
-    public static final String TITULO_ES_OBLIGATORIO = "El título es obligatorio";
-    public static final String DIRECTOR_ES_OBLIGATORIO = "El director es obligatorio";
-    public static final String ANIO_ES_OBLIGATORIO = "El año es obligatorio";
-    public static final String DURACION_ES_OBLIGATORIA = "La duración es obligatoria";
-    public static final String EL_ANIO_DEBE_SER_ENTRE_1888_Y = "El año debe ser entre 1888 y ";
-    public static final String EL_ANIO_DEBE_SER_UN_NUMERO_VALIDO = "El año debe ser un número válido";
-    public static final String LA_DURACION_DEBE_SER_UN_NUMERO_VALIDO = "La duración debe ser un número válido";
-    public static final String VACIO = "";
-    public static final String DURACIÓN_DEBE_SER_ENTRE_MINUTOS = "La duración debe ser entre 1 y 500 minutos";
 
     private JTextField txtTitulo, txtDirector, txtAnio, txtDuracion;
     private JComboBox<String> cmbGenero;
@@ -47,7 +24,7 @@ public class AgregarPeliculaForm extends JFrame {
     private PeliculaDAO peliculaDAO;
 
     public AgregarPeliculaForm() {
-        setTitle(AGREGAR_NUEVA_PELÍCULA);
+        setTitle(TITULO_VENTANA_AGREGAR_PELÍCULA);
         setSize(WIDTH1, HEIGHT1);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -59,24 +36,31 @@ public class AgregarPeliculaForm extends JFrame {
         JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        panel.add(new JLabel(TITULO));
+        panel.add(new JLabel(TITULO_ETIQUETA));
         txtTitulo = new JTextField();
         panel.add(txtTitulo);
 
-        panel.add(new JLabel(DIRECTOR));
+        panel.add(new JLabel(DIRECTOR_ETIQUETA));
         txtDirector = new JTextField();
         panel.add(txtDirector);
 
-        panel.add(new JLabel(ANIO));
+        panel.add(new JLabel(ANIO_ETIQUETA));
         txtAnio = new JTextField();
         panel.add(txtAnio);
 
-        panel.add(new JLabel(DURACION_MIN));
+        panel.add(new JLabel(DURACION_MIN_ETIQUETA));
         txtDuracion = new JTextField();
         panel.add(txtDuracion);
 
-        panel.add(new JLabel(GENERO));
-        String[] generos = {COMEDIA, DRAMA, ACCIÓN, TERROR, CIENCIA_FICCION, ROMANCE, AVENTURA, ANIMACION};
+        panel.add(new JLabel(GENERO_ETIQUETA));
+        String[] generos = {COMEDIA.getNombre(),
+                DRAMA.getNombre(),
+                ACCION.getNombre(),
+                TERROR.getNombre(),
+                CIENCIA_FICCION.getNombre(),
+                ROMANCE.getNombre()
+        };
+
         cmbGenero = new JComboBox<>(generos);
         panel.add(cmbGenero);
 
@@ -108,12 +92,12 @@ public class AgregarPeliculaForm extends JFrame {
             pelicula.setDuracion(Integer.parseInt(txtDuracion.getText().trim()));
             pelicula.setGenero((String) cmbGenero.getSelectedItem());
 
-            if (peliculaDAO.crearPelicula(pelicula)) {
+            if (peliculaDAO.insertarPelicula(pelicula)) {
                 JOptionPane.showMessageDialog(this, PELICULA_AGREGADA_EXITOSAMENTE);
                 limpiarCampos();
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, ERROR_ANIO_Y_DURACION_INVALIDOS, ERROR1, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ERROR_ANIO_Y_DURACION_INVALIDOS, DialogosConstantes.ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -136,8 +120,8 @@ public class AgregarPeliculaForm extends JFrame {
         }
 
         try {
-            int año = Integer.parseInt(txtAnio.getText().trim());
-            if (año < 1888 || año > java.time.Year.now().getValue() + 1) {
+            int anio = Integer.parseInt(txtAnio.getText().trim());
+            if (anio < 1888 || anio > java.time.Year.now().getValue() + 1) {
                 JOptionPane.showMessageDialog(this, EL_ANIO_DEBE_SER_ENTRE_1888_Y + (java.time.Year.now().getValue() + 1), "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -149,7 +133,7 @@ public class AgregarPeliculaForm extends JFrame {
         try {
             int duracion = Integer.parseInt(txtDuracion.getText().trim());
             if (duracion <= 0 || duracion > 500) {
-                JOptionPane.showMessageDialog(this, DURACIÓN_DEBE_SER_ENTRE_MINUTOS, ERROR1, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, DURACION_DEBE_SER_ENTRE_MINUTOS, DialogosConstantes.ERROR, JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         } catch (NumberFormatException e) {
@@ -161,7 +145,7 @@ public class AgregarPeliculaForm extends JFrame {
     }
 
     private void mostrarError(String mensaje, JTextField campo) {
-        JOptionPane.showMessageDialog(this, mensaje, ERROR1, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, mensaje, DialogosConstantes.ERROR, JOptionPane.ERROR_MESSAGE);
         campo.requestFocus();
     }
 

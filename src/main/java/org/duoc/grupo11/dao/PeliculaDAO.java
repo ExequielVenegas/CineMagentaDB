@@ -8,7 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.duoc.grupo11.constants.DatabaseConstantes.*;
 import static org.duoc.grupo11.constants.DialogosConstantes.*;
@@ -53,7 +55,7 @@ public class PeliculaDAO {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, ERROR_AL_OBTENER_PELICULAS + e.getMessage());
         }
-        return peliculas;
+        return peliculas.stream().sorted(Comparator.comparing(obs -> obs.getId())).collect(Collectors.toList());
     }
 
     public List<Pelicula> buscarPorTitulo(String titulo) {
@@ -133,23 +135,6 @@ public class PeliculaDAO {
         }
     }
 
-    public boolean existePeliculaConId(int id) {
-
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(SELECT_WHERE_ID_COUNT_SQL)) {
-
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, ERROR_AL_VERIFICAR_ID + e.getMessage());
-        }
-        return false;
-    }
-
     public Pelicula buscarPorId(int id) {
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_WHERE_ID_SQL)) {
@@ -169,5 +154,54 @@ public class PeliculaDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Pelicula> buscarPeliculas(String genero, int anioInicio, int anioFin) {
+        List<Pelicula> peliculas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Cartelera WHERE 1=1");
+
+        if (genero != null && !genero.isEmpty() && !genero.equals("Todos")) {
+            sql.append(" AND genero = ?");
+        }
+        if (anioInicio > 0 && anioFin > 0) {
+            sql.append(" AND anio BETWEEN ? AND ?");
+        } else if (anioInicio > 0) {
+            sql.append(" AND anio >= ?");
+        } else if (anioFin > 0) {
+            sql.append(" AND anio <= ?");
+        }
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            if (genero != null && !genero.isEmpty() && !genero.equals("Todos")) {
+                stmt.setString(index++, genero);
+            }
+
+            if (anioInicio > 0 && anioFin > 0) {
+                stmt.setInt(index++, anioInicio);
+                stmt.setInt(index++, anioFin);
+            } else if (anioInicio > 0) {
+                stmt.setInt(index++, anioInicio);
+            } else if (anioFin > 0) {
+                stmt.setInt(index++, anioFin);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Pelicula p = new Pelicula();
+                p.setId(rs.getInt(ID));
+                p.setTitulo(rs.getString(TITULO));
+                p.setDirector(rs.getString(DIRECTOR));
+                p.setAnio(rs.getInt(ANIO));
+                p.setDuracion(rs.getInt(DURACION));
+                p.setGenero(rs.getString(GENERO));
+                peliculas.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return peliculas;
     }
 }
